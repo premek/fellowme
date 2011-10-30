@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "FellowMe";
+}
+
+
+
+<h2>Hledani studentu</h2>
+
+<p>Zadejte cast jmena, prijmeni nebo loginu osoby na CVUT FEL</p>
+
+@using (Html.BeginForm(String.Empty, String.Empty, FormMethod.Get, new { id="search"}))
+{
+    @Html.Editor("q")
+    
+    <input type="submit" value="Hledej" />
+}
+
+<textarea id="results" rows="10" cols="120">
+</textarea>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $("form#search").submit(function(e) {
+        //query server for data
+        $.ajax({
+            url: "@Url.Action("Search")",
+            data: $("form#search").serialize(),
+            success: function (data) {
+                $("textarea#results").val(JSON.stringify(data));
+            }
+        });
+        
+        //Prevent the submit event and remain on the screen
+        e.preventDefault();
+        return false;
+    });
+});
+</script>
