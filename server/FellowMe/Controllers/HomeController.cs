@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml.Serialization;
-//using FellowMe.Models;
 using System.Xml;
 
 namespace FellowMe.Controllers
@@ -13,15 +12,16 @@ namespace FellowMe.Controllers
     {
         public ActionResult Index()
         {
-           
             return View();
         }
 
+        [HttpHeader("Access-Control-Allow-Origin", "*")]
+        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Search(string q)
         {
             var results = new
             {
-                success = "true",
+                success = true,
                 results = String.IsNullOrEmpty(q) ? null : (from student in MvcApplication.GetSchedule().STUDENTI
                           where    student.login.Contains(q, StringComparison.OrdinalIgnoreCase)
                                 || student.jmeno.Contains(q, StringComparison.OrdinalIgnoreCase)
@@ -36,7 +36,7 @@ namespace FellowMe.Controllers
 
         public ActionResult RefreshCache()
         {
-            //refresh the inmemory data
+            //refresh the in-memory data
             MvcApplication.ImportData();
 
             return new HttpStatusCodeResult(200);   //OK
