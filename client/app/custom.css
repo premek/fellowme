@@ -1,0 +1,7 @@
+.x-form-fieldset .x-field:first-child .x-input-text {
+-webkit-border-bottom-right-radius: 0;
+        border-bottom-right-radius: 0;
+-webkit-border-top-right-radius: 0;
+        border-top-right-radius: 0;
+}
+
