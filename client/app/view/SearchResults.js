@@ -4,10 +4,10 @@ Ext.define('FellowMe.view.SearchResults', {
 	config: {
 		store: 'SearchResults',
 		layout: 'fit',
-		height: '200',
+		//height: '200',
 		itemTpl: '{name}',
 		id:'searchresults',
-
+		onItemDisclosure: function(){} // show disclosure buttons
 	}
 });
 

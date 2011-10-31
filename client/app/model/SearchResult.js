@@ -3,7 +3,7 @@ Ext.define('FellowMe.model.SearchResult', {
     fields: ['id', 'name'],
     proxy: {
         type: 'ajax',
-        url: 'http://skola.vyhnal.net/via/results.json.php', //TODO: config
+        url: FellowMe.config.server + 'Search',
         reader: {
             type: 'json',
             root: 'results' 
