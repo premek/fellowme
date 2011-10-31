@@ -1,9 +1,14 @@
 Ext.define('FellowMe.controller.Main', {
 	extend: 'Ext.app.Controller',
-	views: ['Login', 'Search', 'SearchResults'],
+	views: ['Login', 'Search', 'SearchResults', 'Info', 'Main'],
 	stores: ['SearchResults'],
 	// These "refs" will generate "getters" for each of the view component instances
 	refs: [{
+		ref: 'main',
+		selector: 'mainview',
+		xtype: 'mainview'
+	},
+	{
 		ref: 'login',
 		selector: 'loginview',
 		autoCreate: true,
@@ -13,9 +18,15 @@ Ext.define('FellowMe.controller.Main', {
 		ref: 'search',
 		selector: 'searchview',
 		xtype: 'searchview'
+	},
+	{
+		ref: 'info',
+		selector: 'infoview',
+		xtype: 'infoview'
 	}],
 
 	init: function() {
+		var main = this.getMainView().create({});
 
 		console.log('Init home controller');
 
@@ -23,9 +34,7 @@ Ext.define('FellowMe.controller.Main', {
 		Ext.create('Ext.Panel', {
 			//items: this.getLoginView().create({})
 			scrollable: false,
-			items: this.getSearchView().create({
-				userName: 'New Awesome'
-			})
+			items: main
 		}));
 
 		this.control({
@@ -36,6 +45,12 @@ Ext.define('FellowMe.controller.Main', {
 					this.onSearchChange(name);
 				}
 			},
+			'#infoBackButton': {
+				'tap': function(button) {
+					main.setActiveItem(0);
+				}
+			},
+
 			'#searchinput': {
 				'keyup': function(ev, input) {
 					this.onSearchChange(input.value);
@@ -45,8 +60,11 @@ Ext.define('FellowMe.controller.Main', {
 				},
 			},
 			'#searchresults': {
-				'select': function(list, selected) {
-					console.log("Selected " + selected.get('name'));
+				'select': function(list, user) {
+					
+				console.log("Selected " + user.get('name'));
+				main.setActiveItem(1);
+				debugger;//main.getActiveItem
 				}
 			}
 		});
@@ -70,7 +88,7 @@ Ext.define('FellowMe.controller.Main', {
 
 				console.log("Do XHR: " + newVal);
 				list.deselect(list.getSelection());
-				store.getProxy().extraParams.query = newVal;
+				store.getProxy().extraParams.q = newVal;
 				store.load();
 			},
 			700); // wait this long before doing ajax request
