@@ -1,7 +1,7 @@
 Ext.define('FellowMe.controller.Main', {
 	extend: 'Ext.app.Controller',
 	views: ['Login', 'Search', 'SearchResults', 'Info', 'Main'],
-	stores: ['SearchResults'],
+	stores: ['PersonInfo','SearchResults'],
 	// These "refs" will generate "getters" for each of the view component instances
 	refs: [{
 		ref: 'main',
@@ -36,6 +36,7 @@ Ext.define('FellowMe.controller.Main', {
 			scrollable: false,
 			items: main
 		}));
+		main.setActiveItem(1);
 
 		this.control({
 			'#loggedinuser': {
@@ -61,10 +62,15 @@ Ext.define('FellowMe.controller.Main', {
 			},
 			'#searchresults': {
 				'select': function(list, user) {
+					var store;
 					
 				console.log("Selected " + user.get('name'));
 				main.setActiveItem(1);
-				debugger;//main.getActiveItem
+				debugger;//
+				store = Ext.getCmp('personinfo').getStore();
+				store.getProxy().extraParams.id = user.get('id');
+				store.load();
+
 				}
 			}
 		});
