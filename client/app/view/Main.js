@@ -8,7 +8,7 @@ Ext.define('FellowMe.view.Main', {
     config: {
         //fullscreen: true,
         layout: 'card',
-        activeItem: 0,
+		animation:'slide',
         items: [
             {
                 xtype: 'search'
