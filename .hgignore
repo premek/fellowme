@@ -29,3 +29,5 @@ syntax: glob
 *.snm
 *.nav
 server/FellowMe/FellowMe\.csproj\.user
+server/FellowMe/bin
+server/FellowMe/obj
