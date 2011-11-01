@@ -1,0 +1,31 @@
+# use glob syntax.
+syntax: glob
+
+*.elc
+*.pyc
+*~
+*.out
+*.o
+*.swp
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.loa
+*.lof
+*.lot
+*.toc
+*.log
+*.nls
+*.pdf
+*.ps
+*.nlo
+*.bz2
+*.eps
+*.swo
+*.msi
+*.tar.gz
+*.dmg
+*.snm
+*.nav
+server/FellowMe/FellowMe\.csproj\.user

@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "FellowMe";
+}
+
+
+
+<h2>Hledani studentu</h2>
+
+<p>Zadejte cast jmena, prijmeni nebo loginu osoby na CVUT FEL</p>
+
+@using (Html.BeginForm(String.Empty, String.Empty, FormMethod.Get, new { id = "search" }))
+{
+    @Html.Editor("q")
+    
+    <input type="submit" value="Hledej" />
+}
+
+<textarea id="search_results" rows="10" cols="120">
+</textarea>
+
+
+<h2>Detail Studenta</h2>
+
+<p>Zadejte id studenta</p>
+
+@using (Html.BeginForm(String.Empty, String.Empty, FormMethod.Get, new { id = "person" }))
+{
+    @Html.Editor("id")
+    
+    <input type="submit" value="Zobraz" />
+}
+
+<textarea id="person_results" rows="10" cols="120">
+</textarea>
+
+
+<h2>Rozvrh Studenta</h2>
+
+<p>Zadejte id studenta</p>
+
+@using (Html.BeginForm(String.Empty, String.Empty, FormMethod.Get, new { id = "schedule" }))
+{
+    @Html.Editor("id")
+    
+    <input type="submit" value="Zobraz" />
+}
+
+<textarea id="schedule_results" rows="10" cols="120">
+</textarea>
+
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $("form#search").submit(function(e) {
+        //query server for data
+        $.ajax({
+            url: "@Url.Action("Search")",
+            data: $("form#search").serialize(),
+            success: function (data) {
+                $("textarea#search_results").val(JSON.stringify(data));
+            }
+        });
+        
+        //Prevent the submit event and remain on the screen
+        e.preventDefault();
+        return false;
+    });
+
+     $("form#person").submit(function(e) {
+        //query server for data
+        $.ajax({
+            url: "@Url.Action("Person")",
+            data: $("form#person").serialize(),
+            success: function (data) {
+                $("textarea#person_results").val(JSON.stringify(data));
+            }
+        });
+        
+        //Prevent the submit event and remain on the screen
+        e.preventDefault();
+        return false;
+    });
+
+     $("form#schedule").submit(function(e) {
+        //query server for data
+        $.ajax({
+            url: "@Url.Action("Schedule")",
+            data: $("form#schedule").serialize(),
+            success: function (data) {
+                $("textarea#schedule_results").val(JSON.stringify(data));
+            }
+        });
+        
+        //Prevent the submit event and remain on the screen
+        e.preventDefault();
+        return false;
+    });
+});
+</script>
