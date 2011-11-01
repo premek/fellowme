@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace FellowMe.Controllers
 {
@@ -66,8 +67,6 @@ namespace FellowMe.Controllers
         {
             var data = MvcApplication.GetSchedule();
 
-            //get even/odd week
-            var week = (DateTime.Now.WeekNumber() % 2 == 0) ? "S" : "L";
 
             //query schedule
             var events = (from stud in data.STUDENTI
@@ -75,17 +74,20 @@ namespace FellowMe.Controllers
                       join list in data.LISTKY on rel.listek_id equals list.id
                       join pred in data.PREDMETY on list.predmet_id equals pred.id
                       join mist in data.MISTNOSTI on list.mistnost_id equals mist.id
+                      let date = GetDate(list.den_cis, list.zacatek)
+                      let week = (date.WeekNumber() % 2 == 0) ? "S" : "L"//get even/odd week
                       where String.Equals(stud.id, id)
-                        //&& String.Equals(list.sudy_lichy, week)
+                         && (date != DateTime.MinValue) //eliminate invalid dates coming from the parsing function
+                         && (String.IsNullOrEmpty(list.sudy_lichy) || String.Equals(list.sudy_lichy, week))
                       select new
                       {
-                          predmet = pred.nazev,
-                          mistnost = mist.cislo,
-                          den = list.den_cis,
-                          zacatek = list.zacatek,
-                          pocet_hodin = list.pocet_hodin
-
+                          co = pred.nazev,
+                          kde = mist.cislo,
+                          kdy = date
+                          //pocet_hodin = list.pocet_hodin
                       }).ToList();
+
+            //TODO: add limit to time when schedule is returned (only during term)
 
 
             var results = new
@@ -105,9 +107,35 @@ namespace FellowMe.Controllers
             return new HttpStatusCodeResult(200);   //OK
         }
 
+        #region Helpers
 
+        private DateTime GetDate(string day, string time)
+        {
+            if (String.IsNullOrEmpty(day) || String.IsNullOrEmpty(time))
+                return DateTime.MinValue;
+
+            var dow = (int)DateTime.Now.DayOfWeek;
+            if (dow < 0)
+                dow += 7; 
+
+            var eday = Int32.Parse(day);
+            var date = DateTime.Today.AddDays(eday < dow ?  (7 - eday - dow): (eday - dow));
+            var match = TimeRegex.Match(time);
+
+            if (!match.Success)
+                return DateTime.MinValue;
+
+            date = date.AddHours(Double.Parse(match.Groups[1].Value)).AddMinutes(Double.Parse(match.Groups[2].Value));
+
+            return date;
+        }
+
+        //regex for parsing time information
+        private Regex TimeRegex = new Regex("^([0-9]{1,2}):([0-9]{2})$");
 
         // error JSON result
         private JsonResult JsonError { get { return Json(new { success = false, results = new object[] { } }, JsonRequestBehavior.AllowGet); } }
+
+        #endregion
     }
 }

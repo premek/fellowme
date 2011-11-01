@@ -28,3 +28,4 @@ syntax: glob
 *.dmg
 *.snm
 *.nav
+server/FellowMe/FellowMe\.csproj\.user
