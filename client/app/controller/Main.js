@@ -66,9 +66,14 @@ Ext.define('FellowMe.controller.Main', {
 					
 				console.log("Selected " + user.get('name'));
 				main.setActiveItem(1);
-				debugger;//
+				
 				store = Ext.getCmp('personinfo').getStore();
 				store.getProxy().extraParams.id = user.get('id');
+				store.load();
+
+				store = Ext.getCmp('personevents').getStore();
+				store.getProxy().extraParams.id = user.get('id');
+				store.on('load',fnLog);
 				store.load();
 
 				}

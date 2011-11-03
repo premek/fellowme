@@ -5,3 +5,14 @@
         border-top-right-radius: 0;
 }
 
+
+/*zobrazeni eventu */
+.event{
+border:1px solid #555;
+border-radius:4px;
+padding:.5em;
+margin: 0 0 .5em 0;
+}
+.event h2{
+font-size:1.2em
+}
