@@ -3,7 +3,6 @@ Ext.define('FellowMe.model.PersonInfo', {
 	fields: ['id', 'name', 'titul', 'email', 'rocnik', 'fakulta', 'obor', {
 		name: 'fullname',
 		convert: function(v, rec) {
-		debugger
 			return (rec.data.titul ? rec.data.titul + " ": "") + rec.data.name;
 		}
 	}],
