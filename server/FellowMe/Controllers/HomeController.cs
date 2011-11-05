@@ -20,12 +20,20 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Search(string q)
         {
+            var schedule = MvcApplication.GetSchedule();
+
             //search for people
-            var people = String.IsNullOrEmpty(q) ? null : (from student in MvcApplication.GetSchedule().STUDENTI
-                          where    student.login.Contains(q, StringComparison.OrdinalIgnoreCase)
-                                || student.jmeno.Contains(q, StringComparison.OrdinalIgnoreCase)
-                                || student.prijmeni.Contains(q, StringComparison.OrdinalIgnoreCase)
-                           select new { id = student.id, name = String.Format("{0} {1}", student.jmeno, student.prijmeni) }).ToList();
+            //TODO: rename name to jmeno
+            var people = String.IsNullOrEmpty(q) ? null : (from student in schedule.STUDENTI
+                          where    student.login.StartsWith(q, StringComparison.OrdinalIgnoreCase)
+                                || student.jmeno.StartsWith(q, StringComparison.OrdinalIgnoreCase)
+                                || student.prijmeni.StartsWith(q, StringComparison.OrdinalIgnoreCase)
+                           select new { id = student.id, typ = "student", name = String.Format("{0} {1}", student.jmeno, student.prijmeni) })
+                           .Union(from ucitel in schedule.UCITELE
+                                  where (!String.IsNullOrEmpty(ucitel.login) && ucitel.login.StartsWith(q, StringComparison.OrdinalIgnoreCase))
+                                        || (!String.IsNullOrEmpty(ucitel.jmeno) &&  ucitel.jmeno.StartsWith(q, StringComparison.OrdinalIgnoreCase))
+                                        || (!String.IsNullOrEmpty(ucitel.prijmeni) && ucitel.prijmeni.StartsWith(q, StringComparison.OrdinalIgnoreCase))
+                                  select new { id = ucitel.id, typ = "ucitel", name = String.Format("{0} {1}", ucitel.jmeno, ucitel.prijmeni) }).ToList();
 
             //assemble the resulting JSON
             var results = new
@@ -41,24 +49,40 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Person(string id)
         {
-            var person = MvcApplication.GetSchedule().STUDENTI.SingleOrDefault(x => String.Equals(x.id,id));
-            if (person == null)
+            var schedule = MvcApplication.GetSchedule();
+            var student = schedule.STUDENTI.Select(stud => new
+            {
+                id = stud.id,
+                typ = "student",
+                name = String.Format("{0} {1}", stud.jmeno, stud.prijmeni),
+                titul = stud.titul,
+                email = stud.stud_email,
+                rocnik = stud.rocnik,
+                fakulta = stud.fakulta,
+                obor = stud.obor
+            }).SingleOrDefault(x => String.Equals(x.id,id));
+
+            if(student != null)
+                return Json(new { success =true, results = new { student }}, JsonRequestBehavior.AllowGet);
+            
+            var ucitel = schedule.UCITELE.Select(uc => new
+            {
+                id = uc.id,
+                typ = "ucitel",
+                name = String.Format("{0} {1}", uc.jmeno, uc.prijmeni),
+                titul_pred = uc.titul_pred,  
+                titul_za = uc.titul_za,
+                email = uc.uc_email,
+                katedra = (from kat in schedule.KATEDRY
+                           where String.Equals(kat.id, uc.kat_id)
+                           select kat.nazev_cz).SingleOrDefault(),
+             }).SingleOrDefault(x => String.Equals(x.id, id));
+
+            if (ucitel == null)
                 return JsonError;
 
-            var results = new
-            {
-                success = true,
-                results = new { id = person.id,
-                                name = String.Format("{0} {1}", person.jmeno, person.prijmeni),
-                                titul = person.titul,
-                                email = person.stud_email,
-                                rocnik = person.rocnik,
-                                fakulta = person.fakulta,
-                                obor = person.obor}
-            };
 
-
-            return Json(results, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, results = new { ucitel } }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpHeader("Access-Control-Allow-Origin", "*")]
@@ -66,7 +90,6 @@ namespace FellowMe.Controllers
         public ActionResult Schedule(string id)
         {
             var data = MvcApplication.GetSchedule();
-
 
             //query schedule
             var events = (from stud in data.STUDENTI
@@ -90,13 +113,27 @@ namespace FellowMe.Controllers
             //TODO: add limit to time when schedule is returned (only during term)
 
 
-            var results = new
-            {
-                success = (events != null) && events.Count > 0,
-                results = events
-            };
+            if((events != null) && (events.Count > 0))
+                return Json(new { success = true, results = events }, JsonRequestBehavior.AllowGet);
 
-            return Json(results, JsonRequestBehavior.AllowGet);
+
+             events = (from teacher in data.UCITELE
+                           join list in data.LISTKY on teacher.id equals list.ucitel1_id
+                           join pred in data.PREDMETY on list.predmet_id equals pred.id
+                           join mist in data.MISTNOSTI on list.mistnost_id equals mist.id
+                           let date = GetDate(list.den_cis, list.zacatek)
+                           let week = (date.WeekNumber() % 2 == 0) ? "S" : "L"//get even/odd week
+                           where String.Equals(teacher.id, id)
+                              && (date != DateTime.MinValue) //eliminate invalid dates coming from the parsing function
+                              && (String.IsNullOrEmpty(list.sudy_lichy) || String.Equals(list.sudy_lichy, week))
+                           select new
+                           {
+                               co = pred.nazev,
+                               kde = mist.cislo,
+                               kdy = date
+                           }).Distinct().ToList();
+
+             return Json(new { success = (events != null) && events.Count > 0, results = events }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult RefreshCache()
@@ -115,11 +152,11 @@ namespace FellowMe.Controllers
                 return DateTime.MinValue;
 
             var dow = (int)DateTime.Now.DayOfWeek;
-            if (dow < 0)
-                dow += 7; 
+            //if (dow < 0)
+            //    dow += 7; 
 
             var eday = Int32.Parse(day);
-            var date = DateTime.Today.AddDays(eday < dow ?  (7 - eday - dow): (eday - dow));
+            var date = DateTime.Today.AddDays(eday < dow ?  (7 + eday - dow): (eday - dow));
             var match = TimeRegex.Match(time);
 
             if (!match.Success)
