@@ -3,10 +3,13 @@ Ext.define('FellowMe.view.Search', {
 	alias: 'widget.search',
 	layout: 'vbox',
 	title: "Search",
+			scrollable:false,
 	config: {
 		items: [{
 			xtype: 'fieldset',
+			scrollable:false,
 			items: {
+			scrollable:false,
 				xtype: 'textfield',
 				clearIcon: true,
 				value: 'abc',
