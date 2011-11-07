@@ -39,6 +39,11 @@ Ext.define('FellowMe.controller.Main', {
 		main.setActiveItem(1);
 
 		this.control({
+			'button': {
+				'tap': function() {
+					Device.vibrate(30);
+				}
+			},
 			'#loggedinuser': {
 				'tap': function(button) {
 					var name = button.getText();
