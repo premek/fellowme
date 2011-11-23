@@ -5,6 +5,7 @@ FellowMe.config = {
 };
 
 
+// fallback used in browser
 if(typeof(Device)==='undefined'){
 	Device = {
 		vibrate: Ext.emptyFn,

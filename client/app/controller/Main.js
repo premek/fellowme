@@ -59,7 +59,7 @@ Ext.define('FellowMe.controller.Main', {
 
 			'#searchinput': {
 				'keyup': function(ev, input) {
-					this.onSearchChange(input.value);
+					this.onSearchChange(input.target.value);
 				},
 				'change': function(ev, newVal) {
 					this.onSearchChange(newVal);
