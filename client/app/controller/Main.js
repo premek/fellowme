@@ -69,17 +69,19 @@ Ext.define('FellowMe.controller.Main', {
 				'select': function(list, user) {
 					var store;
 					
-				console.log("Selected " + user.get('name'));
-				main.setActiveItem(1);
+					console.log("Selected " + user.get('name'));
+					main.setActiveItem(1);
 				
-				store = Ext.getCmp('personinfo').getStore();
-				store.getProxy().extraParams.id = user.get('id');
-				store.load();
+					//store = Ext.getCmp('personinfo').getStore();
+					//store.getProxy().extraParams.id = user.get('id');
+					//store.load();
 
-				store = Ext.getCmp('personevents').getStore();
-				store.getProxy().extraParams.id = user.get('id');
-				store.on('load',fnLog);
-				store.load();
+					Ext.getCmp('toptoolbar').setTitle(user.get('name'));
+
+					store = Ext.getCmp('personevents').getStore();
+					store.getProxy().extraParams.id = user.get('id');
+					store.on('load',fnLog);
+					store.load();
 
 				}
 			}
