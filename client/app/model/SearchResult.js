@@ -1,6 +1,6 @@
 Ext.define('FellowMe.model.SearchResult', {
     extend: 'Ext.data.Model',
-    fields: ['id', 'name'],
+    fields: ['id', 'name', 'typ'],
     proxy: {
         type: 'ajax',
         url: FellowMe.config.server + 'Search',
