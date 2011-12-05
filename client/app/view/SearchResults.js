@@ -7,6 +7,7 @@ Ext.define('FellowMe.view.SearchResults', {
 		//height: '200',
 		itemTpl: '<div class=\'{typ}\'>{name}</div>',
 		id:'searchresults',
+		padding: '10 10 50 10',
 		onItemDisclosure: function(){} // show disclosure buttons
 	}
 });
