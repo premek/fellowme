@@ -1,6 +1,6 @@
 Ext.define('FellowMe.controller.Main', {
 	extend: 'Ext.app.Controller',
-	views: ['Login', 'Search', 'SearchResults', 'Info', 'Main'],
+	views: ['Login', 'Search', 'SearchResults', 'Info', 'InfoList', 'Main'],
 	stores: ['PersonInfo','SearchResults'],
 	// These "refs" will generate "getters" for each of the view component instances
 	refs: [{
@@ -36,7 +36,7 @@ Ext.define('FellowMe.controller.Main', {
 			scrollable: false,
 			items: main
 		}));
-		main.setActiveItem(1);
+		main.setActiveItem(0);
 
 		this.control({
 			'button': {

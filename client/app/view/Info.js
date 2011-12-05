@@ -1,9 +1,9 @@
 Ext.define('FellowMe.view.Info', {
 	extend: 'Ext.Panel',
 	alias: 'widget.info',
-	layout: 'vbox',
 	title: "Info",
 	config: {
+		//layout: 'fit',
 		items: [
 		/*{
 			xtype: 'dataview',
@@ -15,12 +15,13 @@ Ext.define('FellowMe.view.Info', {
 			scrollable:false
 		},*/
 		{
-			xtype: 'dataview',
-			store: Ext.create('FellowMe.store.Events'),
-			itemTpl: '<div class="event"><h2>{kdy} - {kde}</h2><p>{co}</p></div>', // TODO format date
+			xtype: 'infolist',
+			//xtype: 'dataview',
+			//store: Ext.create('FellowMe.store.Events'),
+			//itemTpl: '<div class="event"><h2>{kdy} - {kde}</h2><p>{co}</p></div>', // TODO format date
 			id: 'personevents',
-			padding: 20
-		},{
+		},
+		{
 			id: 'toptoolbar',
 			xtype: 'toolbar',
 			docked: 'top',
@@ -36,7 +37,8 @@ Ext.define('FellowMe.view.Info', {
 			//	itemTpl: '<h2>{fullname}</h2>',
 			//}
 			]
-		}]
+		}
+		]
 	}
 });
 
