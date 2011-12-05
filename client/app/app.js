@@ -5,6 +5,17 @@ FellowMe.config = {
 };
 
 
+// fallback used in browser
+if(typeof(Device)==='undefined'){
+	Device = {
+		vibrate: Ext.emptyFn,
+		showToast: window.alert,
+		getModel: Ext.emptyFn,
+		getManufacturer: Ext.emptyFn,
+		getUUID: Ext.emptyFn,
+	};
+}
+
 document.title = FellowMe.config.windowTitle;
 // XXX: vyhodit
 var fnLog = function(){console.log(arguments)}
