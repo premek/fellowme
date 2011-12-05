@@ -31,3 +31,5 @@ syntax: glob
 server/FellowMe/FellowMe\.csproj\.user
 server/FellowMe/bin
 server/FellowMe/obj
+androidWrapper/FellowMeAndroid/local.properties
+androidWrapper/FellowMeAndroid/bin
