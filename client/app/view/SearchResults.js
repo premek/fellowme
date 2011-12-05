@@ -5,7 +5,7 @@ Ext.define('FellowMe.view.SearchResults', {
 		store: 'SearchResults',
 		layout: 'fit',
 		//height: '200',
-		itemTpl: '{name}',
+		itemTpl: '<div class=\'{typ}\'>{name}</div>',
 		id:'searchresults',
 		onItemDisclosure: function(){} // show disclosure buttons
 	}

@@ -23,19 +23,21 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Search(string q)
         {
+            q = q.RemoveDiacritics();
+
             var schedule = MvcApplication.GetSchedule();
 
             //search for people
             //TODO: rename name to jmeno
             var people = String.IsNullOrEmpty(q) ? null : (from student in schedule.STUDENTI
                           where    student.login.StartsWith(q, StringComparison.OrdinalIgnoreCase)
-                                || student.jmeno.StartsWith(q, StringComparison.OrdinalIgnoreCase)
-                                || student.prijmeni.StartsWith(q, StringComparison.OrdinalIgnoreCase)
+                                || student.jmeno.RemoveDiacritics().StartsWith(q, StringComparison.OrdinalIgnoreCase)
+                                || student.prijmeni.RemoveDiacritics().StartsWith(q, StringComparison.OrdinalIgnoreCase)
                            select new { id = student.id, typ = "student", name = String.Format("{0} {1}", student.jmeno, student.prijmeni) })
                            .Union(from ucitel in schedule.UCITELE
                                   where (!String.IsNullOrEmpty(ucitel.login) && ucitel.login.StartsWith(q, StringComparison.OrdinalIgnoreCase))
-                                        || (!String.IsNullOrEmpty(ucitel.jmeno) &&  ucitel.jmeno.StartsWith(q, StringComparison.OrdinalIgnoreCase))
-                                        || (!String.IsNullOrEmpty(ucitel.prijmeni) && ucitel.prijmeni.StartsWith(q, StringComparison.OrdinalIgnoreCase))
+                                        || (!String.IsNullOrEmpty(ucitel.jmeno) &&  ucitel.jmeno.RemoveDiacritics().StartsWith(q, StringComparison.OrdinalIgnoreCase))
+                                        || (!String.IsNullOrEmpty(ucitel.prijmeni) && ucitel.prijmeni.RemoveDiacritics().StartsWith(q, StringComparison.OrdinalIgnoreCase))
                                   select new { id = ucitel.id, typ = "ucitel", name = String.Format("{0} {1}", ucitel.jmeno, ucitel.prijmeni) }).ToList();
 
             //assemble the resulting JSON
@@ -57,8 +59,7 @@ namespace FellowMe.Controllers
             {
                 id = stud.id,
                 typ = "student",
-                name = String.Format("{0} {1}", stud.jmeno, stud.prijmeni),
-                titul = stud.titul,
+                name = String.Format("{0}{1} {2}", String.IsNullOrWhiteSpace(stud.titul) ? String.Empty : stud.titul + " ", stud.jmeno, stud.prijmeni),
                 email = stud.stud_email,
                 rocnik = stud.rocnik,
                 fakulta = stud.fakulta,
@@ -66,15 +67,17 @@ namespace FellowMe.Controllers
             }).SingleOrDefault(x => String.Equals(x.id,id));
 
             if(student != null)
-                return Json(new { success =true, results = new { student }}, JsonRequestBehavior.AllowGet);
+                return Json(new { success =true, results = student }, JsonRequestBehavior.AllowGet);
             
             var ucitel = schedule.UCITELE.Select(uc => new
             {
                 id = uc.id,
                 typ = "ucitel",
-                name = String.Format("{0} {1}", uc.jmeno, uc.prijmeni),
-                titul_pred = uc.titul_pred,  
-                titul_za = uc.titul_za,
+                name = String.Format("{0}{1} {2}{3}", 
+                    String.IsNullOrWhiteSpace(uc.titul_pred) ? String.Empty : uc.titul_pred + " ",
+                    uc.jmeno, 
+                    uc.prijmeni,
+                    String.IsNullOrWhiteSpace(uc.titul_za) ? String.Empty : " " + uc.titul_za),
                 email = uc.uc_email,
                 katedra = (from kat in schedule.KATEDRY
                            where String.Equals(kat.id, uc.kat_id)
@@ -85,7 +88,7 @@ namespace FellowMe.Controllers
                 return JsonError;
 
 
-            return Json(new { success = true, results = new { ucitel } }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, results = ucitel }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpHeader("Access-Control-Allow-Origin", "*")]

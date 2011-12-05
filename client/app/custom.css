@@ -16,3 +16,13 @@ margin: 0 0 .5em 0;
 .event h2{
 font-size:1.2em
 }
+
+.student{
+	padding-left: 22px;
+	background: url('images/user_red.png') no-repeat left center;
+}
+
+.ucitel{
+	padding-left: 22px;
+	background: url('images/user_suit.png') no-repeat left center;
+}
