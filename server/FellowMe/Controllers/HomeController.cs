@@ -6,6 +6,9 @@ using System.Web.Mvc;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Text.RegularExpressions;
+using System.DirectoryServices;
+using System.DirectoryServices.Protocols;
+using System.Net;
 
 namespace FellowMe.Controllers
 {
@@ -142,6 +145,39 @@ namespace FellowMe.Controllers
             MvcApplication.ImportData();
 
             return new HttpStatusCodeResult(200);   //OK
+        }
+
+        public ActionResult Authenticate()
+        {
+            /*var domainAndUsername = @"LDAP://ldap.feld.cvut.cz/ou=people,o=feld.cvut.cz";
+            var userName = "staston1";
+            var passWord = "qwe123";
+
+            DirectoryEntry entry = new DirectoryEntry(domainAndUsername, userName, passWord, AuthenticationTypes.Secure);
+            entry.Invoke(""
+            
+            DirectorySearcher mySearcher = new DirectorySearcher(entry);
+           
+
+            SearchResultCollection results = mySearcher.FindAll();*/
+
+
+            bool validation;
+            try
+            {
+                LdapConnection ldc = new LdapConnection(new LdapDirectoryIdentifier(@"LDAP://ldap.feld.cvut.cz/ou=people,o=feld.cvut.cz", false, false));
+                NetworkCredential nc = new NetworkCredential("staston1", "qwe123");
+                ldc.Credential = nc;
+                ldc.AuthType = AuthType.Negotiate;
+                ldc.Bind(nc); // user has authenticated at this point, as the credentials were used to login to the dc.
+                validation = true;
+            }
+            catch (LdapException)
+            {
+                validation = false;
+            }
+
+            return new HttpStatusCodeResult(200);
         }
 
         #region Helpers
