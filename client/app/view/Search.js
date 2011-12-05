@@ -1,22 +1,11 @@
 Ext.define('FellowMe.view.Search', {
 	extend: 'Ext.form.Panel',
-	alias: 'widget.search',
+	alias:  'widget.search',
 	layout: 'vbox',
-	title: "Search",
-			scrollable:false,
+	title:  'Search',
 	config: {
-		items: [{
-			xtype: 'fieldset',
-			scrollable:false,
-			items: {
-			scrollable:false,
-				xtype: 'textfield',
-				clearIcon: true,
-				value: 'abc',
-				// FIXME
-				id: 'searchinput'
-			}
-		},
+		scrollable: false,
+		items: [
 		{
 			xtype: 'searchresults',
 			id: 'searchresults',
@@ -25,26 +14,15 @@ Ext.define('FellowMe.view.Search', {
 		{
 			xtype: 'toolbar',
 			docked: 'top',
+			layout: 'fit',
+			height: 44, 
 			items: [{
-				text: 'Mr. Somebody',
+				scrollable:false,
+				xtype: 'textfield',
+				clearIcon: true,
+				value: 'abc',
 				// FIXME
-				id: 'loggedinuser'
-			},
-			{
-				xtype: 'spacer'
-			},
-			{
-				text: 'Search',
-				//iconCls: 'search',
-				ui: 'confirm',
-				handler: function() {
-					form.submit({
-						waitMsg: {
-							message: 'Submitting',
-							cls: 'demos-loading'
-						}
-					});
-				}
+				id: 'searchinput'
 			}]
 		}]
 	},
