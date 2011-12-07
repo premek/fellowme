@@ -1,0 +1,34 @@
+.x-form-fieldset .x-field:first-child .x-input-text {
+-webkit-border-bottom-right-radius: 0;
+        border-bottom-right-radius: 0;
+-webkit-border-top-right-radius: 0;
+        border-top-right-radius: 0;
+}
+
+.x-button .x-button-icon.x-icon-mask {
+width: 1em;
+height: 1em;
+-webkit-mask-size: 1em;
+}
+
+
+/*zobrazeni eventu */
+/*.event{
+border:1px solid #555;
+border-radius:4px;
+padding:.5em;
+margin: 0 0 .5em 0;
+}
+.event h2{
+font-size:1.2em
+}*/
+
+.student{
+	padding-left: 22px;
+	background: url('images/user_red.png') no-repeat left center;
+}
+
+.ucitel{
+	padding-left: 22px;
+	background: url('images/user_suit.png') no-repeat left center;
+}
