@@ -112,7 +112,8 @@ Ext.define('FellowMe.controller.Main', {
 				fn.lastCall = newVal;
 
 				console.log("Do XHR: " + newVal);
-				list.deselect(list.getSelection());
+//				list.deselect(list.getSelection());
+				store.removeAll();
 				store.getProxy().extraParams.q = newVal;
 				store.load();
 			},
