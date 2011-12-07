@@ -20,7 +20,8 @@ Ext.define('FellowMe.view.Search', {
 				scrollable:false,
 				xtype: 'textfield',
 				clearIcon: true,
-				value: 'abc',
+				value: '',
+				placeHolder: 'Type someone\'s name',
 				// FIXME
 				id: 'searchinput'
 			}]

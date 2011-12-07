@@ -56,6 +56,11 @@ Ext.define('FellowMe.controller.Main', {
 					main.setActiveItem(0);
 				}
 			},
+			'#infoInfoButton': {
+				'tap': function(button) {
+					//main.setActiveItem(4); //FIXME, dodelat obrazovku s informacema o uzivateli, to co se zobrazovalo nad seznamem jeho eventu
+				}
+			},
 
 			'#searchinput': {
 				'keyup': function(ev, input) {
@@ -76,11 +81,11 @@ Ext.define('FellowMe.controller.Main', {
 					//store.getProxy().extraParams.id = user.get('id');
 					//store.load();
 
-					Ext.getCmp('toptoolbar').setTitle(user.get('name'));
+					Ext.getCmp('toptoolbar').setTitle(user.get('name').length>20 ? user.get('name').substring(0,20)+"…" : user.get('name') );
 
 					store = Ext.getCmp('personevents').getStore();
+					store.removeAll();
 					store.getProxy().extraParams.id = user.get('id');
-					store.on('load',fnLog);
 					store.load();
 
 				}
@@ -93,6 +98,8 @@ Ext.define('FellowMe.controller.Main', {
 	},
 
 	onSearchChange: function(newVal) {
+		if(typeof newVal !== 'string') return;
+
 		var fn = arguments.callee,
 		me = this;
 
