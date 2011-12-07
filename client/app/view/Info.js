@@ -23,20 +23,21 @@ Ext.define('FellowMe.view.Info', {
 		},
 		{
 			id: 'toptoolbar',
-			xtype: 'toolbar',
+			xtype: 'navigationbar',
 			docked: 'top',
+			title: 'Info',
 			items: [{
-				text: 'Search',
 				ui: 'back',
+				action: 'back',
+				iconCls: 'search',
+				iconMask: true,
 				id: 'infoBackButton'
-			},
-			//{
-			//	id: 'personname',
-			//	xtype: 'dataview',
-			//	store: Ext.create('FellowMe.store.PersonInfo'),
-			//	itemTpl: '<h2>{fullname}</h2>',
-			//}
-			]
+			},{
+				text: 'Info',
+				ui: 'forward',
+				id: 'infoInfoButton',
+				align : 'right'
+			}]
 		}
 		]
 	}

@@ -1,9 +1,11 @@
-FellowMe = {};
+var FellowMe = {};
+
 FellowMe.config = {
 	windowTitle: "Fellow Me",
 	server: "http://fellowme.ondrejstastny.cz/Home/"
 };
 
+FellowMe.fnLog = function(){console.log("LOG"); console.log(arguments)}
 
 // fallback used in browser
 if(typeof(Device)==='undefined'){
@@ -17,8 +19,6 @@ if(typeof(Device)==='undefined'){
 }
 
 document.title = FellowMe.config.windowTitle;
-// XXX: vyhodit
-var fnLog = function(){console.log(arguments)}
 
 Ext.Loader.setConfig({ enabled: true });
 Ext.Loader.setPath('FellowMe', 'app');

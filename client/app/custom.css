@@ -5,6 +5,12 @@
         border-top-right-radius: 0;
 }
 
+.x-button .x-button-icon.x-icon-mask {
+width: 1em;
+height: 1em;
+-webkit-mask-size: 1em;
+}
+
 
 /*zobrazeni eventu */
 /*.event{
