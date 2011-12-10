@@ -16,14 +16,11 @@ Ext.define('FellowMe.view.Info', {
 		},*/
 		{
 			xtype: 'infolist',
-			//xtype: 'dataview',
-			//store: Ext.create('FellowMe.store.Events'),
-			//itemTpl: '<div class="event"><h2>{kdy} - {kde}</h2><p>{co}</p></div>', // TODO format date
 			id: 'personevents',
 		},
 		{
 			id: 'toptoolbar',
-			xtype: 'navigationbar',
+			xtype: 'titlebar',
 			docked: 'top',
 			title: 'Info',
 			items: [{

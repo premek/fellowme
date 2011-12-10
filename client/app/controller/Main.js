@@ -81,7 +81,7 @@ Ext.define('FellowMe.controller.Main', {
 					//store.getProxy().extraParams.id = user.get('id');
 					//store.load();
 
-					Ext.getCmp('toptoolbar').setTitle(user.get('name').length>20 ? user.get('name').substring(0,20)+"…" : user.get('name') );
+					Ext.getCmp('toptoolbar').setTitle(user.get('name')); // samo se to zkrati kdyz je to moc dlouhe
 
 					store = Ext.getCmp('personevents').getStore();
 					store.removeAll();

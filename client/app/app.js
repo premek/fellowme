@@ -23,13 +23,12 @@ document.title = FellowMe.config.windowTitle;
 Ext.Loader.setConfig({ enabled: true });
 Ext.Loader.setPath('FellowMe', 'app');
 
-// require // XXX - to se mi tady nelibi
-Ext.require('FellowMe.store.PersonInfo');
-Ext.require('FellowMe.store.Events');
-
+Ext.require('FellowMe.store.Events')
 
 // Main application entry point
 Ext.application({
+    requires: 'Ext.DateExtras',
+
 	phoneStartupScreen: 'images/sencha_logo.png',
 	name: 'FellowMe',  
 	controllers: ['Main']
