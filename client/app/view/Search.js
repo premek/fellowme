@@ -12,18 +12,21 @@ Ext.define('FellowMe.view.Search', {
 			flex: 1
 		},
 		{
-			xtype: 'toolbar',
+			xtype: 'titlebar',
 			docked: 'top',
-			layout: 'fit',
-			height: 44, 
+			//layout: 'fit',
+			//height: 44, 
 			items: [{
-				scrollable:false,
 				xtype: 'textfield',
 				clearIcon: true,
 				value: '',
 				placeHolder: 'Type someone\'s name',
 				// FIXME
 				id: 'searchinput'
+			},{
+				text:"?",
+				align : 'right',
+				id:"helpbutton"
 			}]
 		}]
 	},
