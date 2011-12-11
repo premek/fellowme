@@ -9,11 +9,13 @@ using System.Text.RegularExpressions;
 using System.DirectoryServices;
 using System.DirectoryServices.Protocols;
 using System.Net;
+using System.Web.Security;
 
 namespace FellowMe.Controllers
 {
     public class HomeController : Controller
     {
+        [Authorize]
         public ActionResult Index()
         {
             return View();
@@ -21,9 +23,11 @@ namespace FellowMe.Controllers
 
         [HttpHeader("Access-Control-Allow-Origin", "*")]
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
-        public ActionResult Search(string q)
+        public ActionResult Search(string q, int? limit)
         {
             q = q.RemoveDiacritics();
+
+            limit = limit ?? 50; //make sure we have a default limit
 
             var schedule = MvcApplication.GetSchedule();
 
@@ -38,7 +42,7 @@ namespace FellowMe.Controllers
                                   where (!String.IsNullOrEmpty(ucitel.login) && ucitel.login.StartsWith(q, StringComparison.OrdinalIgnoreCase))
                                         || (!String.IsNullOrEmpty(ucitel.jmeno) &&  ucitel.jmeno.RemoveDiacritics().StartsWith(q, StringComparison.OrdinalIgnoreCase))
                                         || (!String.IsNullOrEmpty(ucitel.prijmeni) && ucitel.prijmeni.RemoveDiacritics().StartsWith(q, StringComparison.OrdinalIgnoreCase))
-                                  select new { id = ucitel.id, typ = "ucitel", name = String.Format("{0} {1}", ucitel.jmeno, ucitel.prijmeni) }).ToList();
+                                  select new { id = ucitel.id, typ = "ucitel", name = String.Format("{0} {1}", ucitel.jmeno, ucitel.prijmeni) }).Take(limit.Value).ToList();
 
             //assemble the resulting JSON
             var results = new
@@ -97,6 +101,8 @@ namespace FellowMe.Controllers
         {
             var data = MvcApplication.GetSchedule();
 
+            var minDate = DateTime.Now.AddHours(-2);
+
             //query schedule
             var events = (from stud in data.STUDENTI
                       join rel in data.LISTKY_STUDENTU on stud.id equals rel.student_id
@@ -107,6 +113,7 @@ namespace FellowMe.Controllers
                       let week = (date.WeekNumber() % 2 == 0) ? "S" : "L"//get even/odd week
                       where String.Equals(stud.id, id)
                          && (date != DateTime.MinValue) //eliminate invalid dates coming from the parsing function
+                         && date > minDate
                          && (String.IsNullOrEmpty(list.sudy_lichy) || String.Equals(list.sudy_lichy, week))
                       select new
                       {
@@ -131,6 +138,7 @@ namespace FellowMe.Controllers
                            let week = (date.WeekNumber() % 2 == 0) ? "S" : "L"//get even/odd week
                            where String.Equals(teacher.id, id)
                               && (date != DateTime.MinValue) //eliminate invalid dates coming from the parsing function
+                              && date > minDate
                               && (String.IsNullOrEmpty(list.sudy_lichy) || String.Equals(list.sudy_lichy, week))
                            select new
                            {
@@ -152,35 +160,34 @@ namespace FellowMe.Controllers
 
         public ActionResult Authenticate()
         {
-            /*var domainAndUsername = @"LDAP://ldap.feld.cvut.cz/ou=people,o=feld.cvut.cz";
-            var userName = "staston1";
-            var passWord = "qwe123";
+            return View();
+        }
 
-            DirectoryEntry entry = new DirectoryEntry(domainAndUsername, userName, passWord, AuthenticationTypes.Secure);
-            entry.Invoke(""
+        [HttpPost]
+        public ActionResult Authenticate(string login, string password)
+        {
+            var path = @"LDAP://ldap.feld.cvut.cz:636/ou=people,o=feld.cvut.cz";
+            var userName = String.Format(@"uid={0},ou=people,o=feld.cvut.cz", login);
             
-            DirectorySearcher mySearcher = new DirectorySearcher(entry);
-           
+            DirectoryEntry de = new DirectoryEntry(path, userName, password, AuthenticationTypes.SecureSocketsLayer);
 
-            SearchResultCollection results = mySearcher.FindAll();*/
-
-
-            bool validation;
             try
             {
-                LdapConnection ldc = new LdapConnection(new LdapDirectoryIdentifier(@"LDAP://ldap.feld.cvut.cz/ou=people,o=feld.cvut.cz", false, false));
-                NetworkCredential nc = new NetworkCredential("staston1", "qwe123");
-                ldc.Credential = nc;
-                ldc.AuthType = AuthType.Negotiate;
-                ldc.Bind(nc); // user has authenticated at this point, as the credentials were used to login to the dc.
-                validation = true;
+                var obj = de.NativeObject;
             }
-            catch (LdapException)
+            catch (DirectoryServicesCOMException ex)
             {
-                validation = false;
+                //System.Console.Write("Bind Failure: {0}", ex.Message);
+
+                return new HttpStatusCodeResult(400);
             }
 
-            return new HttpStatusCodeResult(200);
+            var authTicket = new FormsAuthenticationTicket(1, userName, DateTime.Now, DateTime.Now.AddDays(14), true, string.Empty);
+            var authCookie = FormsAuthentication.GetAuthCookie(userName, true);
+            authCookie.Value = FormsAuthentication.Encrypt(authTicket);
+            HttpContext.Response.Cookies.Add(authCookie);
+
+            return Json(new { result = true }, JsonRequestBehavior.AllowGet);
         }
 
         #region Helpers
