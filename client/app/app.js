@@ -23,7 +23,8 @@ document.title = FellowMe.config.windowTitle;
 Ext.Loader.setConfig({ enabled: true });
 Ext.Loader.setPath('FellowMe', 'app');
 
-Ext.require('FellowMe.store.Events')
+Ext.require('FellowMe.store.Events');
+Ext.require('FellowMe.store.PersonInfo');
 
 // Main application entry point
 Ext.application({

@@ -1,8 +1,9 @@
 Ext.define('FellowMe.controller.Main', {
 	extend: 'Ext.app.Controller',
-	views: ['Login', 'Search', 'SearchResults', 'Info', 'InfoList', 'Main'],
+	views: ['Login', 'Search', 'SearchResults', 'Info', 'InfoList', 'PersonInfo', 'Main'],
 	stores: ['PersonInfo','SearchResults'],
 	// These "refs" will generate "getters" for each of the view component instances
+	// (...a jsou tu nahovno, zajimavejsi je view/Main.js)
 	refs: [{
 		ref: 'main',
 		selector: 'mainview',
@@ -23,12 +24,15 @@ Ext.define('FellowMe.controller.Main', {
 		ref: 'info',
 		selector: 'infoview',
 		xtype: 'infoview'
+	},
+	{
+		ref: 'personinfo',
+		selector: 'personinfoview',
+		xtype: 'personinfo'
 	}],
 
 	init: function() {
 		var main = this.getMainView().create({});
-
-		console.log('Init home controller');
 
 		Ext.Viewport.add(
 		Ext.create('Ext.Panel', {
@@ -51,14 +55,35 @@ Ext.define('FellowMe.controller.Main', {
 					this.onSearchChange(name);
 				}
 			},
+			'#helpBackButton': {
+				'tap': function(button) {
+					//main.getLayout().getAnimation().setReverse(true);
+					main.setActiveItem(0);
+					//main.getLayout().getAnimation().setReverse(false);
+				}
+			},
 			'#infoBackButton': {
 				'tap': function(button) {
+					//main.getLayout().getAnimation().setReverse(true);
 					main.setActiveItem(0);
+					//main.getLayout().getAnimation().setReverse(false);
+				}
+			},
+			'#personinfoBackButton': {
+				'tap': function(button) {
+					//main.getLayout().getAnimation().setReverse(true);
+					main.setActiveItem(1);
+					//main.getLayout().getAnimation().setReverse(false);
 				}
 			},
 			'#infoInfoButton': {
 				'tap': function(button) {
-					//main.setActiveItem(4); //FIXME, dodelat obrazovku s informacema o uzivateli, to co se zobrazovalo nad seznamem jeho eventu
+					main.setActiveItem(2); 
+				}
+			},
+			'#helpbutton': {
+				'tap': function(button) {
+					main.setActiveItem(3); 
 				}
 			},
 
@@ -72,29 +97,28 @@ Ext.define('FellowMe.controller.Main', {
 			},
 			'#searchresults': {
 				'select': function(list, user) {
+					Device.vibrate(30);
+
 					var store;
 					
-					console.log("Selected " + user.get('name'));
 					main.setActiveItem(1);
 				
-					//store = Ext.getCmp('personinfo').getStore();
-					//store.getProxy().extraParams.id = user.get('id');
-					//store.load();
-
 					Ext.getCmp('toptoolbar').setTitle(user.get('name')); // samo se to zkrati kdyz je to moc dlouhe
+					Ext.getCmp('pitoptoolbar').setTitle(user.get('name'));
 
 					store = Ext.getCmp('personevents').getStore();
 					store.removeAll();
 					store.getProxy().extraParams.id = user.get('id');
 					store.load();
 
+					store = Ext.getCmp('personinfo').getStore();
+					store.getProxy().extraParams.id = user.get('id');
+					store.load();
+
+
 				}
 			}
 		});
-	},
-
-	onLaunch: function() {
-		console.log('onLaunch home controller');
 	},
 
 	onSearchChange: function(newVal) {

@@ -17,6 +17,8 @@ Ext.define('FellowMe.view.Search', {
 			//layout: 'fit',
 			//height: 44, 
 			items: [{
+				hidden:true // nejaky bug, tohle pomaha...
+			},{
 				xtype: 'textfield',
 				clearIcon: true,
 				value: '',
@@ -24,7 +26,12 @@ Ext.define('FellowMe.view.Search', {
 				// FIXME
 				id: 'searchinput'
 			},{
-				text:"?",
+				// nic to nedela, je to jen pro klid uzivatele, a aby si to nepletl a nechtel kliknout na About, asi se to muze dat pryc ;)
+				iconCls: 'search',
+				iconMask: true,
+				ui:'confirm' 
+			},{
+				text:"About",
 				align : 'right',
 				id:"helpbutton"
 			}]

@@ -31,7 +31,7 @@ Ext.define('FellowMe.view.Info', {
 				id: 'infoBackButton'
 			},{
 				text: 'Info',
-				ui: 'forward',
+				ui: 'confirm',				
 				id: 'infoInfoButton',
 				align : 'right'
 			}]
