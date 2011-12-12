@@ -20,6 +20,8 @@ if(typeof(Device)==='undefined'){
 
 document.title = FellowMe.config.windowTitle;
 
+//Ext.Ajax.useDefaultXhrHeader=false
+
 Ext.Loader.setConfig({ enabled: true });
 Ext.Loader.setPath('FellowMe', 'app');
 

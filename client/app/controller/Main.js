@@ -40,7 +40,7 @@ Ext.define('FellowMe.controller.Main', {
 			scrollable: false,
 			items: main
 		}));
-		main.setActiveItem(4);
+		main.setActiveItem(0);
 
 		this.control({
 			'button': {
@@ -116,6 +116,12 @@ Ext.define('FellowMe.controller.Main', {
 					store.load();
 
 
+				}
+			},
+			'#loginscreen': {
+				'loginsuccess': function() {
+					main.setActiveItem(4);
+					debugger;
 				}
 			}
 		});

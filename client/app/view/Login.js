@@ -49,12 +49,30 @@ Ext.define('FellowMe.view.Login', {
 				ui: 'confirm',
 				align: 'right',
 				handler: function() {
-					form.submit({
+
+					this.up('formpanel').submit({
+						method: 'POST',
+						success: function(form, result){
+							debugger;
+							this.fireEvent("loginsuccess", result);
+						},
+						failure: function(form, result){
+							debugger;
+							this.fireEvent("loginfailure", result);
+						},
 						waitMsg: {
-							message: 'Submitting',
-							cls: 'demos-loading'
+							message: 'Submitting'
 						}
 					});
+				}
+			},
+			{
+				text: 'Taky Login',
+				ui: 'confirm',
+				align: 'right',
+				handler: function() {
+debugger;
+					this.fireEvent("loginsuccess", {} );
 				}
 			},
 			{
