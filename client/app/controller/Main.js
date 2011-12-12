@@ -40,7 +40,7 @@ Ext.define('FellowMe.controller.Main', {
 			scrollable: false,
 			items: main
 		}));
-		main.setActiveItem(0);
+		main.setActiveItem(4);
 
 		this.control({
 			'button': {

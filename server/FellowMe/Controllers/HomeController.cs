@@ -15,7 +15,6 @@ namespace FellowMe.Controllers
 {
     public class HomeController : Controller
     {
-        [Authorize]
         public ActionResult Index()
         {
             return View();
@@ -25,6 +24,11 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Search(string q, int? limit)
         {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                return new HttpStatusCodeResult(400);
+            }
+
             q = q.RemoveDiacritics();
 
             limit = limit ?? 50; //make sure we have a default limit
@@ -58,6 +62,11 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Person(string id)
         {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                return new HttpStatusCodeResult(400);
+            }
+
             var schedule = MvcApplication.GetSchedule();
             var student = schedule.STUDENTI.Select(stud => new
             {
@@ -99,6 +108,11 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Schedule(string id)
         {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                return new HttpStatusCodeResult(400);
+            }
+
             var data = MvcApplication.GetSchedule();
 
             var minDate = DateTime.Now.AddHours(-2);
@@ -158,10 +172,6 @@ namespace FellowMe.Controllers
             return new HttpStatusCodeResult(200);   //OK
         }
 
-        public ActionResult Authenticate()
-        {
-            return View();
-        }
 
         [HttpPost]
         public ActionResult Authenticate(string login, string password)
@@ -187,7 +197,7 @@ namespace FellowMe.Controllers
             authCookie.Value = FormsAuthentication.Encrypt(authTicket);
             HttpContext.Response.Cookies.Add(authCookie);
 
-            return Json(new { result = true }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = true });
         }
 
         #region Helpers

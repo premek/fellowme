@@ -1,8 +1,7 @@
 Ext.define('FellowMe.view.Login', {
 	extend: 'Ext.form.Panel',
-	//alias: 'widget.login',
+	alias: 'widget.login',
 	layout: 'vbox',
-	title: "Log In",
 	config: {
 		/*
 				modal        : true,
@@ -11,7 +10,7 @@ Ext.define('FellowMe.view.Login', {
                 width        : '90%',
                 centered     : true,
 				*/
-		url: 'postUser.php',
+		url: FellowMe.config.server + 'Authenticate',
 
 		standardSubmit: false,
 		items: [{
@@ -39,14 +38,16 @@ Ext.define('FellowMe.view.Login', {
 			]
 		},
 		{
-			xtype: 'toolbar',
+			xtype: 'titlebar',
 			docked: 'top',
+			title: 'Fellow Me',
 			items: [{
 				xtype: 'spacer'
 			},
 			{
 				text: 'Log In',
 				ui: 'confirm',
+				align: 'right',
 				handler: function() {
 					form.submit({
 						waitMsg: {
@@ -55,6 +56,10 @@ Ext.define('FellowMe.view.Login', {
 						}
 					});
 				}
+			},
+			{
+				html: '<img src="images/favicon.png" />',
+				align: 'left'
 			}]
 		}]
 	},
