@@ -192,6 +192,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             super.onReceivedTitle(view, title);
             setTitle(title);
         }
+
+		//@Override
+        //public void onProgressChanged(WebView view, int progress)
+        //{
+        //    activity.setProgress(progress * 1000);
+        //    if(progress > 90)
+        //         progressDialog.hide();
+        //}
+
     }
 
     private class WebViewClientImpl extends WebViewClient {
