@@ -29,6 +29,9 @@ Ext.define('FellowMe.view.Main', {
             },
             {
                 xtype: 'help'
+            },
+            {
+            	xtype: 'login'
             }
         ]
     }
