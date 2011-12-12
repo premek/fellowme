@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Authenticate";
+}
+
+<h2>Authenticate</h2>
+
+
+@using (Html.BeginForm())
+{
+    <span>User:</span>
+    @Html.TextBox("login")
+    <br />
+    <span>Password:</span>
+    @Html.Password("password")
+    <br />
+
+    <input type="submit" value="Prihlasit" />
+}

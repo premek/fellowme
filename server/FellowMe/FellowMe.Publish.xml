@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="ftp://ftp.ondrejstastny.cz/fellowme" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="False" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="ondrejstastny.cz-webdeploy" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAmId4P7LWL0WCPervM4oJngAAAAACAAAAAAAQZgAAAAEAACAAAADM8TmZC1ca1HJS6dD8cAEkPZvnM1hK6NzWMOmcCTuHiwAAAAAOgAAAAAIAACAAAADk052pkTLOouBO0B7pwrQlIaB1uNxvzoMbnGh4orNLACAAAADodeSevaFedQsg0NbL+XuKd9AenwTZCQgBJMPhYVmoAUAAAAABxWzAxXFDLy4p2DCgZa+W9lXQlsl+8ugeYh6gfzOlC1xwHdrFNj7oKBOCgcou38duU5R0u3Ux0Ior+WdV8nSs" SelectedForPublish="True">
+    <file relUrl="Global.asax" publishTime="11/01/2011 00:47:42" />
+    <file relUrl="packages.config" publishTime="11/01/2011 00:47:42" />
+    <file relUrl="Web.config" publishTime="11/01/2011 09:42:15" />
+  </publishProfile>
+</publishData>
