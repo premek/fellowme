@@ -43,6 +43,26 @@ namespace FellowMe
             ImportData();
         }
 
+        //protected void Application_BeginRequest(object sender, EventArgs e)
+        //{
+        //    string rqstMethod = HttpContext.Current.Request.HttpMethod;
+
+        //    //Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(new Exception(rqstMethod)));
+
+        //    if (rqstMethod == "OPTIONS" )//|| rqstMethod == "POST"
+        //    {
+        //        HttpContext.Current.Response.AppendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        //        HttpContext.Current.Response.AppendHeader("Access-Control-Allow-Headers", "X-Requested-With, Accept, Access-Control-Allow-Origin");
+        //        HttpContext.Current.Response.AppendHeader("Test", "Ondrej");
+
+        //        HttpContext.Current.Response.Clear();
+        //        HttpContext.Current.Response.StatusCode = 200;
+        //        HttpContext.Current.Response.Write("test");
+        //        var httpApplication = sender as HttpApplication;
+        //        httpApplication.CompleteRequest();
+        //    }
+        //}
+
         public static ROZVRH GetSchedule()
         {
             return (ROZVRH)HttpContext.Current.Cache[RZ_DATA_KEY];
