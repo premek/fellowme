@@ -30,7 +30,7 @@ Ext.define('FellowMe.view.Info', {
 				iconMask: true,
 				id: 'infoBackButton'
 			},{
-				text: 'Info',
+				text: 'Profile',
 				ui: 'confirm',				
 				id: 'infoInfoButton',
 				align : 'right'

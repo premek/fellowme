@@ -32,7 +32,7 @@ Ext.define('FellowMe.view.Main', {
             },
             {
             	xtype: 'login',
-		id:'loginscreen'
+				id:'loginscreen'
             }
         ]
     }
