@@ -40,7 +40,7 @@ Ext.define('FellowMe.controller.Main', {
 			scrollable: false,
 			items: main
 		}));
-		main.setActiveItem(0);
+		main.setActiveItem(4);
 
 		this.control({
 			'button': {
@@ -119,9 +119,12 @@ Ext.define('FellowMe.controller.Main', {
 				}
 			},
 			'#loginscreen': {
+				'loginfailure': function() {
+					Device.showToast("Log In Failed. Please try again.");
+				},
 				'loginsuccess': function() {
-					main.setActiveItem(4);
-					debugger;
+					Device.showToast("Log In Successful.");
+					main.setActiveItem(0);
 				}
 			}
 		});

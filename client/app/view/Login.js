@@ -26,14 +26,14 @@ Ext.define('FellowMe.view.Login', {
 				xtype: 'textfield',
 				name: 'login',
 				label: 'Login',
-				useClearIcon: true,
+				clearIcon: true,
 				autoCapitalize: false
 			},
 			{
 				xtype: 'passwordfield',
 				name: 'password',
 				label: 'Password',
-				useClearIcon: false
+				clearIcon: false
 			},
 			]
 		},
@@ -53,20 +53,18 @@ Ext.define('FellowMe.view.Login', {
 					this.up('formpanel').submit({
 						method: 'POST',
 						success: function(form, result){
-							debugger;
 							this.fireEvent("loginsuccess", result);
 						},
 						failure: function(form, result){
-							debugger;
 							this.fireEvent("loginfailure", result);
 						},
 						waitMsg: {
-							message: 'Submitting'
+							message: 'Please wait…'
 						}
 					});
 				}
 			},
-			{
+			/*{
 				text: 'Taky Login',
 				ui: 'confirm',
 				align: 'right',
@@ -76,9 +74,9 @@ debugger;
 				}
 			},
 			{
-				html: '<img src="images/favicon.png" />',
+				text: '<img src="images/favicon.png" />',
 				align: 'left'
-			}]
+			}*/]
 		}]
 	},
 	initialize: function() {
