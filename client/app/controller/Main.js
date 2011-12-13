@@ -1,7 +1,7 @@
 Ext.define('FellowMe.controller.Main', {
 	extend: 'Ext.app.Controller',
 	views: ['Login', 'Search', 'SearchResults', 'Info', 'InfoList', 'PersonInfo', 'Main'],
-	stores: ['PersonInfo','SearchResults'],
+	stores: ['PersonInfo', 'SearchResults'],
 	// These "refs" will generate "getters" for each of the view component instances
 	// (...a jsou tu nahovno, zajimavejsi je view/Main.js)
 	refs: [{
@@ -30,17 +30,19 @@ Ext.define('FellowMe.controller.Main', {
 		selector: 'personinfoview',
 		xtype: 'personinfo'
 	}],
+	
+	main:undefined,
 
 	init: function() {
-		var main = this.getMainView().create({});
+		this.main = this.getMainView().create({});
 
 		Ext.Viewport.add(
 		Ext.create('Ext.Panel', {
 			//items: this.getLoginView().create({})
 			scrollable: false,
-			items: main
+			items: this.main
 		}));
-		main.setActiveItem(4);
+		this.main.setActiveItem(4);
 
 		this.control({
 			'button': {
@@ -58,32 +60,32 @@ Ext.define('FellowMe.controller.Main', {
 			'#helpBackButton': {
 				'tap': function(button) {
 					//main.getLayout().getAnimation().setReverse(true);
-					main.setActiveItem(0);
+					this.main.setActiveItem(0);
 					//main.getLayout().getAnimation().setReverse(false);
 				}
 			},
 			'#infoBackButton': {
 				'tap': function(button) {
 					//main.getLayout().getAnimation().setReverse(true);
-					main.setActiveItem(0);
+					this.main.setActiveItem(0);
 					//main.getLayout().getAnimation().setReverse(false);
 				}
 			},
 			'#personinfoBackButton': {
 				'tap': function(button) {
 					//main.getLayout().getAnimation().setReverse(true);
-					main.setActiveItem(1);
+					this.main.setActiveItem(1);
 					//main.getLayout().getAnimation().setReverse(false);
 				}
 			},
 			'#infoInfoButton': {
 				'tap': function(button) {
-					main.setActiveItem(2); 
+					this.main.setActiveItem(2);
 				}
 			},
 			'#helpbutton': {
 				'tap': function(button) {
-					main.setActiveItem(3); 
+					this.main.setActiveItem(3);
 				}
 			},
 
@@ -97,41 +99,26 @@ Ext.define('FellowMe.controller.Main', {
 			},
 			'#searchresults': {
 				'select': function(list, user) {
-					Device.vibrate(30);
-
-					var store;
-					
-					main.setActiveItem(1);
-				
-					Ext.getCmp('toptoolbar').setTitle(user.get('name')); // samo se to zkrati kdyz je to moc dlouhe
-					Ext.getCmp('pitoptoolbar').setTitle(user.get('name'));
-
-					store = Ext.getCmp('personevents').getStore();
-					store.removeAll();
-					store.getProxy().extraParams.id = user.get('id');
-					store.load();
-
-					store = Ext.getCmp('personinfo').getStore();
-					store.getProxy().extraParams.id = user.get('id');
-					store.load();
-
-
+					this.showUserInfo(user.get('id'));
 				}
 			},
 			'#loginscreen': {
-				'loginfailure': function() {
-					Device.showToast("Log In Failed. Please try again.");
+				'loginfailure': function(result) {
+					Device.showToast("Log in failed. Please try again.");
 				},
-				'loginsuccess': function() {
-					Device.showToast("Log In Successful.");
-					main.setActiveItem(0);
+				'loginsuccess': function(result) {
+					Device.showToast("Log in successful.");
+					if(!Ext.Ajax.defaultHeaders)Ext.Ajax.defaultHeaders={};
+					Ext.Ajax.defaultHeaders.FellowMeToken = result.token;
+
+					this.showUserInfo(result.person);
 				}
 			}
 		});
 	},
 
 	onSearchChange: function(newVal) {
-		if(typeof newVal !== 'string') return;
+		if (typeof newVal !== 'string') return;
 
 		var fn = arguments.callee,
 		me = this;
@@ -140,18 +127,49 @@ Ext.define('FellowMe.controller.Main', {
 		if (!fn.lastCall || fn.lastCall != newVal) { // do not repeat same calls
 			fn.timer = setTimeout(function() {
 				var list = Ext.getCmp('searchresults'),
-					store = list.getStore();
+				store = list.getStore();
 
 				fn.lastCall = newVal;
 
 				console.log("Do XHR: " + newVal);
-//				list.deselect(list.getSelection());
+				//				list.deselect(list.getSelection());
 				store.removeAll();
 				store.getProxy().extraParams.q = newVal;
 				store.load();
 			},
 			700); // wait this long before doing ajax request
 		}
+	},
+
+	showUserInfo: function(id) {
+		Device.vibrate(30);
+
+		var store;
+					
+		Ext.getCmp('toptoolbar').setTitle("Loading…"); // samo se to zkrati kdyz je to moc dlouhe
+
+		this.main.setActiveItem(1);
+
+		store = Ext.getCmp('personevents').getStore();
+		store.removeAll();
+		store.getProxy().extraParams.id = id;
+		store.load();
+
+		store = Ext.getCmp('personinfo').getStore();
+		store.getProxy().extraParams.id = id;
+		store.on({
+			load: function(store, records, successful) {
+			var name = records[0].get('name');
+
+				if (successful) {
+					Ext.getCmp('toptoolbar').setTitle(name); // samo se to zkrati kdyz je to moc dlouhe
+					Ext.getCmp('pitoptoolbar').setTitle(name);
+				}
+			}
+	});
+
+		store.load();
+
 	}
 });
 
