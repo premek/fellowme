@@ -33,3 +33,4 @@ server/FellowMe/bin
 server/FellowMe/obj
 androidWrapper/FellowMeAndroid/local.properties
 androidWrapper/FellowMeAndroid/bin
+server/packages
