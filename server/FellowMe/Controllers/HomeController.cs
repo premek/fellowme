@@ -15,15 +15,17 @@ namespace FellowMe.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
+        //[Authorize]
+        //public ActionResult Index()
+        //{
+        //    return View();
+        //}
 
         [HttpHeader("Access-Control-Allow-Origin", "*")]
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Search(string q, int? limit)
         {
+            //security check
             if (!HttpContext.User.Identity.IsAuthenticated)
             {
                 return new HttpStatusCodeResult(400);
@@ -62,6 +64,7 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Person(string id)
         {
+            //security check
             if (!HttpContext.User.Identity.IsAuthenticated)
             {
                 return new HttpStatusCodeResult(400);
@@ -108,6 +111,7 @@ namespace FellowMe.Controllers
         [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Schedule(string id)
         {
+            //security check
             if (!HttpContext.User.Identity.IsAuthenticated)
             {
                 return new HttpStatusCodeResult(400);
@@ -137,7 +141,7 @@ namespace FellowMe.Controllers
                           //pocet_hodin = list.pocet_hodin
                       }).ToList();
 
-            //TODO: add limit to time when schedule is returned (only during term)
+            //TODO: add limit to time when schedule is returned (only during term)?
 
 
             if((events != null) && (events.Count > 0))
@@ -173,9 +177,15 @@ namespace FellowMe.Controllers
         }
 
 
-        [HttpPost]
+        [HttpHeader("Access-Control-Allow-Origin", "*")]
+        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
         public ActionResult Authenticate(string login, string password)
         {
+            if (String.IsNullOrEmpty(login) || String.IsNullOrEmpty(password))
+            {
+                return new HttpStatusCodeResult(400);
+            }
+
             var path = @"LDAP://ldap.feld.cvut.cz:636/ou=people,o=feld.cvut.cz";
             var userName = String.Format(@"uid={0},ou=people,o=feld.cvut.cz", login);
             
@@ -185,7 +195,7 @@ namespace FellowMe.Controllers
             {
                 var obj = de.NativeObject;
             }
-            catch (DirectoryServicesCOMException ex)
+            catch (Exception ex)
             {
                 //System.Console.Write("Bind Failure: {0}", ex.Message);
 
@@ -197,7 +207,17 @@ namespace FellowMe.Controllers
             authCookie.Value = FormsAuthentication.Encrypt(authTicket);
             HttpContext.Response.Cookies.Add(authCookie);
 
-            return Json(new { result = true });
+            //auhorized, find the user id
+            var schedule = MvcApplication.GetSchedule();
+            var person = (from student in schedule.STUDENTI
+                          where String.Compare(student.login, login, true) == 0
+                          select student.id)
+                         .Union(
+                          from ucitel in schedule.UCITELE
+                          where String.Compare(ucitel.login, login, true) == 0
+                          select ucitel.id).SingleOrDefault();
+
+            return Json(new { success = true, person = person }, JsonRequestBehavior.AllowGet);
         }
 
         #region Helpers
