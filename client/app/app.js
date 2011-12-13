@@ -11,7 +11,14 @@ FellowMe.fnLog = function(){console.log("LOG"); console.log(arguments)}
 if(typeof(Device)==='undefined'){
 	Device = {
 		vibrate: Ext.emptyFn,
-		showToast: window.alert,
+		showToast: function(message){
+			var box = Ext.Msg.show({
+					msg: message,
+					height:'3em',
+					modal: false
+			});
+			setTimeout(function(){box.hide()},2000);
+		},
 		getModel: Ext.emptyFn,
 		getManufacturer: Ext.emptyFn,
 		getUUID: Ext.emptyFn,
@@ -19,8 +26,6 @@ if(typeof(Device)==='undefined'){
 }
 
 document.title = FellowMe.config.windowTitle;
-
-//Ext.Ajax.useDefaultXhrHeader=false
 
 Ext.Loader.setConfig({ enabled: true });
 Ext.Loader.setPath('FellowMe', 'app');
