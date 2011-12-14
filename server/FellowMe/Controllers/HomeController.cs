@@ -21,16 +21,12 @@ namespace FellowMe.Controllers
         //    return View();
         //}
 
-        [HttpHeader("Access-Control-Allow-Origin", "*")]
-        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
+        [AuthToken]
+        [HttpHeader("Access-Control-Allow-Origin", "http://skola.vyhnal.net")]
+        [HttpHeader("Access-Control-Allow-Credentials", "true")]
+        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with,FellowMeToken")]
         public ActionResult Search(string q, int? limit)
         {
-            //security check
-            if (!HttpContext.User.Identity.IsAuthenticated)
-            {
-                return new HttpStatusCodeResult(400);
-            }
-
             q = q.RemoveDiacritics();
 
             limit = limit ?? 50; //make sure we have a default limit
@@ -60,16 +56,12 @@ namespace FellowMe.Controllers
             return Json(results, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpHeader("Access-Control-Allow-Origin", "*")]
-        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
+        [AuthToken]
+        [HttpHeader("Access-Control-Allow-Origin", "http://skola.vyhnal.net")]
+        [HttpHeader("Access-Control-Allow-Credentials", "true")]
+        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with,FellowMeToken")]
         public ActionResult Person(string id)
         {
-            //security check
-            if (!HttpContext.User.Identity.IsAuthenticated)
-            {
-                return new HttpStatusCodeResult(400);
-            }
-
             var schedule = MvcApplication.GetSchedule();
             var student = schedule.STUDENTI.Select(stud => new
             {
@@ -107,16 +99,12 @@ namespace FellowMe.Controllers
             return Json(new { success = true, results = ucitel }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpHeader("Access-Control-Allow-Origin", "*")]
-        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
+        [AuthToken]
+        [HttpHeader("Access-Control-Allow-Origin", "http://skola.vyhnal.net")]
+        [HttpHeader("Access-Control-Allow-Credentials", "true")]
+        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with,FellowMeToken")]
         public ActionResult Schedule(string id)
         {
-            //security check
-            if (!HttpContext.User.Identity.IsAuthenticated)
-            {
-                return new HttpStatusCodeResult(400);
-            }
-
             var data = MvcApplication.GetSchedule();
 
             var minDate = DateTime.Now.AddHours(-2);
@@ -177,13 +165,16 @@ namespace FellowMe.Controllers
         }
 
 
-        [HttpHeader("Access-Control-Allow-Origin", "*")]
-        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with")]
+        [HttpHeader("Access-Control-Allow-Origin", "http://skola.vyhnal.net")]
+        [HttpHeader("Access-Control-Allow-Credentials", "true")]
+        [HttpHeader("Access-Control-Allow-Headers", "x-requested-with,FellowMeToken")]
         public ActionResult Authenticate(string login, string password)
         {
             if (String.IsNullOrEmpty(login) || String.IsNullOrEmpty(password))
             {
-                return new HttpStatusCodeResult(400);
+                Response.StatusCode = 403;
+
+                return JsonError;
             }
 
             var path = @"LDAP://ldap.feld.cvut.cz:636/ou=people,o=feld.cvut.cz";
@@ -199,14 +190,21 @@ namespace FellowMe.Controllers
             {
                 //System.Console.Write("Bind Failure: {0}", ex.Message);
 
-                return new HttpStatusCodeResult(400);
+                Response.StatusCode = 403;
+
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
-            var authTicket = new FormsAuthenticationTicket(1, userName, DateTime.Now, DateTime.Now.AddDays(14), true, string.Empty);
-            var authCookie = FormsAuthentication.GetAuthCookie(userName, true);
-            authCookie.Value = FormsAuthentication.Encrypt(authTicket);
-            HttpContext.Response.Cookies.Add(authCookie);
+            //var expires = DateTime.Now.AddDays(14);
+            //var authTicket = new FormsAuthenticationTicket(1, userName, DateTime.Now, expires, true, string.Empty);
+            //var authCookie = FormsAuthentication.GetAuthCookie(userName, true);
+            //authCookie.Value = FormsAuthentication.Encrypt(authTicket);
+            //Response.Cookies.Add(authCookie);
 
+            var token = Guid.NewGuid().ToString("N");
+            HttpContext.Application[token] = DateTime.Now.AddDays(14);
+            Response.AddHeader("FellowMeToken", token);
+            
             //auhorized, find the user id
             var schedule = MvcApplication.GetSchedule();
             var person = (from student in schedule.STUDENTI
@@ -217,7 +215,7 @@ namespace FellowMe.Controllers
                           where String.Compare(ucitel.login, login, true) == 0
                           select ucitel.id).SingleOrDefault();
 
-            return Json(new { success = true, person = person }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, token = token, person = person }, JsonRequestBehavior.AllowGet);
         }
 
         #region Helpers
