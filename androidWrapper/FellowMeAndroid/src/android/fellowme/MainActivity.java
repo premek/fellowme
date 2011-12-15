@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
@@ -60,11 +57,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         w.getSettings().setPluginsEnabled(true);
         w.getSettings().setSupportMultipleWindows(false);
         w.getSettings().setJavaScriptEnabled(true);
-		w.getSettings().setDomStorageEnabled(true);
+        w.getSettings().setDomStorageEnabled(true);
         w.setWebViewClient(new WebViewClientImpl());
         w.setWebChromeClient(new WebChromeClientImpl());
-        //w.setWebViewClient(new WebViewClient());
-
+        
         w.addJavascriptInterface(new JSInterface(this, getWebView()), "Device");
 
         if (savedInstanceState != null) {
@@ -108,7 +104,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-
 
     public void onReceivedError(int errorCode, String description, String failingUrl) {
         Log.i("RCVDERR", "Errorcode: " + errorCode + ";Desc: " + description + ";Url:" + failingUrl);
@@ -189,15 +184,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             super.onReceivedTitle(view, title);
             setTitle(title);
         }
-
-		//@Override
+        //@Override
         //public void onProgressChanged(WebView view, int progress)
         //{
         //    activity.setProgress(progress * 1000);
         //    if(progress > 90)
         //         progressDialog.hide();
         //}
-
     }
 
     private class WebViewClientImpl extends WebViewClient {
@@ -206,7 +199,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
+            Log.d(TAG, "url load");
+
+            //view.loadUrl(url);
+            try {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            } catch (Exception e) {
+                Log.w(TAG, e);
+            }
             return true;
         }
 
