@@ -7,7 +7,12 @@ Ext.define('FellowMe.view.PersonInfo', {
 		{
 			xtype: 'dataview',
 			store: Ext.create('FellowMe.store.PersonInfo'),
-			itemTpl: '<a href="mailto:{email}">{email}</a><br />Fakulta: {fakulta}<br />Obor: {obor}<br />Ročník: {rocnik}',
+			itemTpl: '<a href="mailto:{email}">{email}</a><br />'+
+            '<tpl if="typ == \'ucitel\'">'+
+            'Department: {katedra}'+
+			'<tpl else>'+
+            '{fakulta}, {obor}<br />Year: {rocnik}'+
+			'</tpl>',
 			id: 'personinfo',
 			padding: 20,
 		},

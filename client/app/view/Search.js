@@ -17,8 +17,14 @@ Ext.define('FellowMe.view.Search', {
 			//layout: 'fit',
 			//height: 44, 
 			items: [{
+				text:"Login",
+				align: 'left',
+				ui:"back",
+				id:"searchback"
+			},{
 				hidden:true // nejaky bug, tohle pomaha...
 			},{
+				align: 'right',				
 				xtype: 'textfield',
 				clearIcon: true,
 				value: '',
@@ -27,13 +33,10 @@ Ext.define('FellowMe.view.Search', {
 				id: 'searchinput'
 			},{
 				// nic to nedela, je to jen pro klid uzivatele, a aby si to nepletl a nechtel kliknout na About, asi se to muze dat pryc ;)
+				align: 'right',				
 				iconCls: 'search',
 				iconMask: true,
 				ui:'confirm' 
-			},{
-				text:"About",
-				align : 'right',
-				id:"helpbutton"
 			}]
 		}]
 	},

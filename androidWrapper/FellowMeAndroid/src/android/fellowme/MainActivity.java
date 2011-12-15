@@ -20,10 +20,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-/**
- *
- * @author premysl.vyhnal - od Petra Polaka
- */
 public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private SharedPreferences preferences;
@@ -64,6 +60,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         w.getSettings().setPluginsEnabled(true);
         w.getSettings().setSupportMultipleWindows(false);
         w.getSettings().setJavaScriptEnabled(true);
+		w.getSettings().setDomStorageEnabled(true);
         w.setWebViewClient(new WebViewClientImpl());
         w.setWebChromeClient(new WebChromeClientImpl());
         //w.setWebViewClient(new WebViewClient());

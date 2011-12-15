@@ -30,10 +30,12 @@ Ext.define('FellowMe.controller.Main', {
 		selector: 'personinfoview',
 		xtype: 'personinfo'
 	}],
-	
-	main:undefined,
+
+	main: undefined,
 
 	init: function() {
+		var store;
+		var startScreen = 4; //login
 		this.main = this.getMainView().create({});
 
 		Ext.Viewport.add(
@@ -42,7 +44,14 @@ Ext.define('FellowMe.controller.Main', {
 			scrollable: false,
 			items: this.main
 		}));
-		this.main.setActiveItem(4);
+
+		if (window.localStorage && localStorage.getItem("token")) {
+			startScreen = 1; //person events
+			Ext.Ajax.defaultHeaders.FellowMeToken = localStorage.getItem("token");
+			this.showUserInfo(localStorage.getItem("myId"));
+		}
+
+		this.main.setActiveItem(startScreen);
 
 		this.control({
 			'button': {
@@ -60,7 +69,7 @@ Ext.define('FellowMe.controller.Main', {
 			'#helpBackButton': {
 				'tap': function(button) {
 					//main.getLayout().getAnimation().setReverse(true);
-					this.main.setActiveItem(0);
+					this.main.setActiveItem(4);
 					//main.getLayout().getAnimation().setReverse(false);
 				}
 			},
@@ -78,6 +87,14 @@ Ext.define('FellowMe.controller.Main', {
 					//main.getLayout().getAnimation().setReverse(false);
 				}
 			},
+			'#searchback': {
+				'tap': function(button) {
+					//main.getLayout().getAnimation().setReverse(true);
+					this.main.setActiveItem(4);
+					//main.getLayout().getAnimation().setReverse(false);
+				}
+			},
+
 			'#infoInfoButton': {
 				'tap': function(button) {
 					this.main.setActiveItem(2);
@@ -108,7 +125,12 @@ Ext.define('FellowMe.controller.Main', {
 				},
 				'loginsuccess': function(result) {
 					Device.showToast("Log in successful.");
-					if(!Ext.Ajax.defaultHeaders)Ext.Ajax.defaultHeaders={};
+
+					if (window.localStorage) {
+						localStorage.setItem("token", result.token);
+						localStorage.setItem("myId", result.person);
+					}
+
 					Ext.Ajax.defaultHeaders.FellowMeToken = result.token;
 
 					this.showUserInfo(result.person);
@@ -131,7 +153,6 @@ Ext.define('FellowMe.controller.Main', {
 
 				fn.lastCall = newVal;
 
-				console.log("Do XHR: " + newVal);
 				//				list.deselect(list.getSelection());
 				store.removeAll();
 				store.getProxy().extraParams.q = newVal;
@@ -144,10 +165,10 @@ Ext.define('FellowMe.controller.Main', {
 	showUserInfo: function(id) {
 		Device.vibrate(30);
 
-		var store;
-					
-		Ext.getCmp('toptoolbar').setTitle("Loading…"); // samo se to zkrati kdyz je to moc dlouhe
+		var store,
+			me = this;
 
+		Ext.getCmp('toptoolbar').setTitle("Loading…"); 
 		this.main.setActiveItem(1);
 
 		store = Ext.getCmp('personevents').getStore();
@@ -159,14 +180,15 @@ Ext.define('FellowMe.controller.Main', {
 		store.getProxy().extraParams.id = id;
 		store.on({
 			load: function(store, records, successful) {
-			var name = records[0].get('name');
-
 				if (successful) {
-					Ext.getCmp('toptoolbar').setTitle(name); // samo se to zkrati kdyz je to moc dlouhe
-					Ext.getCmp('pitoptoolbar').setTitle(name);
+					Ext.getCmp('toptoolbar').setTitle(records[0].get('name')); // samo se to zkrati kdyz je to moc dlouhe
+					Ext.getCmp('pitoptoolbar').setTitle(records[0].get('name'));
+				} else {
+					me.main.setActiveItem(4);
 				}
+
 			}
-	});
+		});
 
 		store.load();
 

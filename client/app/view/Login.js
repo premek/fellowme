@@ -42,7 +42,9 @@ Ext.define('FellowMe.view.Login', {
 			docked: 'top',
 			title: 'Fellow Me',
 			items: [{
-				xtype: 'spacer'
+				text:"About",
+				align : 'left',
+				id:"helpbutton"
 			},
 			{
 				text: 'Log In',
